@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import connection from "../database.js";
+import { findFinancialEvents, findFinancialEventsSum } from "../repositories/financialRepository.js";
 
 export async function getFinancialEvents(req, res) {
     try {
@@ -18,10 +18,7 @@ export async function getFinancialEvents(req, res) {
           return res.sendStatus(401);
         }
     
-        const events = await connection.query(
-          `SELECT * FROM "financialEvents" WHERE "userId"=$1 ORDER BY "id" DESC`,
-          [user.id]
-        );
+        const events = findFinancialEvents(user.id);
     
         res.send(events.rows);
       } catch (err) {
@@ -47,10 +44,7 @@ export async function getFinancialEventsSum(req, res) {
           return res.sendStatus(401);
         }
     
-        const events = await connection.query(
-          `SELECT * FROM "financialEvents" WHERE "userId"=$1 ORDER BY "id" DESC`,
-          [user.id]
-        );
+        const events = findFinancialEventsSum(user.id);
     
         const sum = events.rows.reduce(
           (total, event) =>
